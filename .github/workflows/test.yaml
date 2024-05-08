@@ -27,3 +27,6 @@ jobs:
 
       - name: Test Base
         run: java -cp "test:src:lib/hamcrest-core-1.3.jar:lib/junit-4.11.jar" org.junit.runner.JUnitCore queue.QueueTest queue.QueueMapFilterTest
+
+      - name: Build Javadoc
+        run: javadoc -cp "src" -d "doc" -private -verbose -Werror -author -version src/queue/AbstractQueue.java src/queue/ArrayQueue.java src/queue/LinkedQueue.java src/queue/Queue.java
