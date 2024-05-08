@@ -12,7 +12,7 @@ if not errorlevel 1 (
   exit /b 1
 )
 
-git remote add upstream https://github.com/YuMSh-Ivanov/queue-2-task.git
+git remote add upstream https://github.com/YuMSh-Ivanov/queue-3-task.git
 git fetch upstream
 git branch feedback upstream/master
 git push -u origin feedback:feedback
