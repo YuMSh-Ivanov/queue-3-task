@@ -8,9 +8,9 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
 
-public class QueueMapFilterTest extends QueueBaseTest<LinkedList<Object>> {
+public class QueueMapFilterTest extends QueueBaseTest<ArrayDeque<Object>> {
 
-    private static <T, L extends List<T>> Collector<T, L, L> toList(final Supplier<L> listSupplier) {
+    private static <T, L extends Collection<T>> Collector<T, L, L> toCollection(final Supplier<L> listSupplier) {
         return new Collector<>() {
 
             @Override
@@ -20,7 +20,7 @@ public class QueueMapFilterTest extends QueueBaseTest<LinkedList<Object>> {
 
             @Override
             public BiConsumer<L, T> accumulator() {
-                return List::add;
+                return Collection::add;
             }
 
             @Override
@@ -44,18 +44,18 @@ public class QueueMapFilterTest extends QueueBaseTest<LinkedList<Object>> {
     }
 
     @Override
-    protected void otherOperations(final List<Pair<Queue, LinkedList<Object>>> queues, final Pair<Queue, LinkedList<Object>> pair) {
-        final Pair<Queue, LinkedList<Object>> newPair;
+    protected void otherOperations(final List<Pair<Queue, ArrayDeque<Object>>> queues, final Pair<Queue, ArrayDeque<Object>> pair) {
+        final Pair<Queue, ArrayDeque<Object>> newPair;
         if (random.nextBoolean()) {
             // Choosing predicate.
             final Object randomElement = randomElement();
             final Predicate<Object> predicate = random.nextBoolean() ? Predicate.isEqual(randomElement) : randomElement.getClass()::isInstance;
-            newPair = Pair.of(pair.first().filter(predicate), pair.second().stream().filter(predicate).collect(toList(LinkedList::new)));
+            newPair = Pair.of(pair.first().filter(predicate), pair.second().stream().filter(predicate).collect(toCollection(ArrayDeque::new)));
             Assert.assertEquals("Result of filter has different type than original", pair.first().getClass(), newPair.first().getClass());
         } else {
             // Choosing function.
             final Function<Object, Object> function = random.nextBoolean() ? String::valueOf : Object::hashCode;
-            newPair = Pair.of(pair.first().map(function), pair.second().stream().map(function).collect(toList(LinkedList::new)));
+            newPair = Pair.of(pair.first().map(function), pair.second().stream().map(function).collect(toCollection(ArrayDeque::new)));
             Assert.assertEquals("Result of map has different type than original", pair.first().getClass(), newPair.first().getClass());
         }
         queues.add(newPair);
@@ -63,11 +63,11 @@ public class QueueMapFilterTest extends QueueBaseTest<LinkedList<Object>> {
 
     @Test
     public void testArrayQueue() {
-        test(ArrayQueue::new, LinkedList::new);
+        test(ArrayQueue::new, ArrayDeque::new);
     }
 
     @Test
     public void testLinkedQueue() {
-        test(LinkedQueue::new, LinkedList::new);
+        test(LinkedQueue::new, ArrayDeque::new);
     }
 }
